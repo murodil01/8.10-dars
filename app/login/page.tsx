@@ -15,8 +15,11 @@ export default function LoginPage() {
     });
   }, []);
 
-  const handleLogin = async (formData: FormData) => {
+  const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault(); 
     setLoading(true);
+
+    const formData = new FormData(event.currentTarget);
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
 
@@ -40,7 +43,7 @@ export default function LoginPage() {
         <h2 className="text-2xl font-bold text-center mb-6">Tizimga kirish</h2>
 
         {providers?.credentials && (
-          <form action={handleLogin}>
+          <form onSubmit={handleLogin}>
             <div className="mb-4">
               <label className="block text-sm font-medium mb-1">Email</label>
               <input
@@ -77,7 +80,7 @@ export default function LoginPage() {
               onClick={() => signIn("google", { callbackUrl: "/profile" })}
               className="w-full bg-red-500 text-white py-2 rounded hover:bg-red-600"
             >
-              with Google 
+              Google orqali kirish
             </button>
           )}
           {providers?.github && (
@@ -85,7 +88,7 @@ export default function LoginPage() {
               onClick={() => signIn("github", { callbackUrl: "/profile" })}
               className="w-full bg-gray-800 text-white py-2 rounded hover:bg-gray-900"
             >
-              with GitHub 
+              GitHub orqali kirish
             </button>
           )}
         </div>
