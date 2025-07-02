@@ -1,31 +1,30 @@
 "use client";
 
-import { useSession, signOut } from "next-auth/react";
-import Link from "next/link";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function HomePage() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
+  const router = useRouter();
 
-  return (
-    <div style={{ textAlign: "center", marginTop: "50px" }}>
-      <h1>Bosh sahifa</h1>
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/login");
+    }
+  }, [status, router]);
 
-      {session ? (
-        <>
-          <p>Xush kelibsiz, {session.user?.name}</p>
-          <p>Email: {session.user?.email}</p>
-          <img src={session.user?.image || ""} width={50} alt="avatar" />
-          <br />
-          <button onClick={() => signOut()}>Chiqish</button>
-        </>
-      ) : (
-        <>
-          <p>Foydalanuvchi tizimga kirmagan</p>
-          <Link href="/login">
-            <button>Kirish</button>
-          </Link>
-        </>
-      )}
-    </div>
-  );
+  if (status === "loading") {
+    return <p className="text-center mt-20">Yuklanmoqda...</p>;
+  }
+
+  if (status === "authenticated") {
+    return (
+      <div className="text-center mt-20">
+        <h1>Xush kelibsiz, {session.user?.name}</h1>
+      </div>
+    );
+  }
+
+  return null;
 }
